@@ -17,12 +17,12 @@ type ProxyLogger struct {
 }
 
 func (pl *ProxyLogger) LogStatus(m string) {
-	pl.logPutter.Printf("[status : %s]", m)
+	pl.logPutter.Printf("\n\t[status : %s]\n", m)
 }
 
 func (pl *ProxyLogger) LogRecord(record ProxyRequestRecord) {
 	pl.logWriter.Printf(
-		"[%s accessed from %s]\n[%s : %s]\n[%s : %s]\n[%d : %d]\n[%f : %f]",
+		"\n\t[%s accessed from %s]\n\t[%s : %s]\n\t[%s : %s]\n\t[%d : %d]\n\t[%f : %f]\n",
 		record.RequestedResource,
 		record.IP,
 		record.CountryName,

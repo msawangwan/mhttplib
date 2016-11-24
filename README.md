@@ -12,7 +12,7 @@ collection of http and web programs by me
 
 * * *
 
-from the example dir, try running:
+from the example dir, try running (go run):
 - main_prx.go <-- reverse proxy
 - main_srv.go <-- serves static files
 
@@ -21,3 +21,5 @@ from the example dir, try running:
 * * *
 
 wip
+
+- need to find a better service than freegeoip

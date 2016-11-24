@@ -1,7 +1,7 @@
 package mproxd
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -15,29 +15,38 @@ type proxyGateway struct {
 	*ProxyLogger
 }
 
-func (pg *proxyGateway) ProxyPassHandler(w http.ResponseWriter, r *http.Request) {
+func (pg *proxyGateway) ListenAndRedirect(port string) {
+	pg.LogStatus("initialising proxy server ...")
+	pg.LogStatus(fmt.Sprintf("listening on %s and redirecting to %v", port, pg.target))
+
+	http.HandleFunc("/", pg.proxyPassHandler)
+	http.ListenAndServe(port, nil)
+}
+
+func (pg *proxyGateway) proxyPassHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("x-mlogaccess", "mlogaccess")
 
 	pg.LogRecord(
 		*NewProxyRequestRecord(
-			r.Header.Get("x-forwarded-for"),
-			"/",
+			r.Header.Get("x-forwarded-for"), // request origin
+			r.URL.Path,                      // requested resource
 		),
 	)
 
 	if pg.routepatterns == nil || pg.parseWhitelist(r) {
+		pg.LogStatus(fmt.Sprintf("route accepted: %s", r.URL.Path))
 		pg.reverseproxy.ServeHTTP(w, r)
+	} else {
+		pg.LogStatus(fmt.Sprintf("route rejected: %s", r.URL.Path))
 	}
 }
 
 func (pg *proxyGateway) parseWhitelist(r *http.Request) bool {
 	for _, regexp := range pg.routepatterns {
 		if regexp.MatchString(r.URL.Path) {
-			log.Printf("route accepted: %x", r.URL.Path)
 			return true
 		}
 	}
-	log.Printf("route rejected: %x", r.URL.Path)
 	return false
 }
 
@@ -46,12 +55,14 @@ func NewReverseProxyGateway(targetAddr string, whitelist string) *proxyGateway {
 	var rewhitelist *regexp.Regexp
 	var err error
 
+	pl := NewProxyLogger()
+
 	if redirecthost, err = url.Parse(targetAddr); err != nil {
-		log.Println("err, parsing proxy pass target addr: %s", err)
+		pl.LogStatus(fmt.Sprintf("err parsing proxy pass target: %v", err))
 	}
 
 	if rewhitelist, err = regexp.Compile(whitelist); err != nil {
-		log.Println("err compiling regex: %s", err)
+		pl.LogStatus(fmt.Sprintf("err compiling regex: %v", err))
 	}
 
 	return &proxyGateway{
@@ -60,6 +71,6 @@ func NewReverseProxyGateway(targetAddr string, whitelist string) *proxyGateway {
 		routepatterns: []*regexp.Regexp{
 			rewhitelist,
 		},
-		ProxyLogger: NewProxyLogger(),
+		ProxyLogger: pl,
 	}
 }

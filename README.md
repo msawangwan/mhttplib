@@ -12,8 +12,8 @@ collection of http and web programs by me
 
 * * *
 
-try running:
-- main.go <-- reverse proxy
+from the example dir, try running:
+- main_prx.go <-- reverse proxy
 - main_srv.go <-- serves static files
 
 ## status

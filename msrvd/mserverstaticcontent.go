@@ -19,6 +19,7 @@ type StaticContentHandler struct {
 var sch *StaticContentHandler
 
 func (sch *StaticContentHandler) ServeStaticContent(port string) {
+	log.Printf("serving static content on: %s", port)
 	http.ListenAndServe(port, nil)
 }
 
@@ -38,17 +39,23 @@ func NewStaticContentHandler() *StaticContentHandler {
 
 	sch.CacheTemplates(basicLayout, statics)
 
-	http.HandleFunc("/", indexhandler)
-	http.HandleFunc("/favicon.ico", faviconhandler)
+	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/favicon.ico", faviconHandler)
+	http.HandleFunc("/tyranny", tyrannyHandler)
 
 	return sch
 }
 
-func indexhandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("served")
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("serving index.html request")
 	sch.TemplateCache["index"].ExecuteTemplate(w, "layout", "")
 }
 
-func faviconhandler(w http.ResponseWriter, r *http.Request) {
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
 	/* empty handler handles the browser requesting favicon.ico */
+}
+
+func tyrannyHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("serving tyranny.html request")
+	sch.TemplateCache["tyranny"].ExecuteTemplate(w, "layout", "")
 }

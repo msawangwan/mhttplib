@@ -12,15 +12,16 @@ const (
 )
 
 type ProxyLogger struct {
-	entry *log.Logger
+	logWriter *log.Logger
+	logPutter *log.Logger // <-- for printing to console only
 }
 
-func (al *ProxyLogger) LogStatus(m string) {
-	al.entry.Printf("[status : %s]", m)
+func (pl *ProxyLogger) LogStatus(m string) {
+	pl.logPutter.Printf("[status : %s]", m)
 }
 
-func (al *ProxyLogger) LogRecord(record ProxyRequestRecord) {
-	al.entry.Printf(
+func (pl *ProxyLogger) LogRecord(record ProxyRequestRecord) {
+	pl.logWriter.Printf(
 		"[%s accessed from %s]\n[%s : %s]\n[%s : %s]\n[%d : %d]\n[%f : %f]",
 		record.RequestedResource,
 		record.IP,
@@ -53,10 +54,15 @@ func NewProxyLogger() *ProxyLogger {
 	//defer logfile.Close() <- ????
 
 	return &ProxyLogger{
-		entry: log.New(
+		logWriter: log.New(
 			io.MultiWriter(logfile, os.Stdout),
 			LOG_MSG_PREFIX,
-			log.Ldate|log.Ltime|log.Lshortfile,
+			log.Ldate|log.Ltime,
+		),
+		logPutter: log.New(
+			os.Stdout,
+			LOG_MSG_PREFIX,
+			log.Ldate|log.Ltime,
 		),
 	}
 }

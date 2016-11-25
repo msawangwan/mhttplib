@@ -18,7 +18,7 @@ type StaticContentHandler struct {
 
 var sch *StaticContentHandler
 
-func (sch *StaticContentHandler) ServeStaticContent(port string) {
+func (sch *StaticContentHandler) ListenAndServeStaticContent(port string) {
 	log.Printf("serving static content on: %s", port)
 	http.ListenAndServe(port, nil)
 }

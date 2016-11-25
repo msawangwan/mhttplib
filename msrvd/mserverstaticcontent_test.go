@@ -13,7 +13,7 @@ func TestSetupAndTearDown(t *testing.T) { // skip -- need to figure out how to '
 	t.Skipf("skipping test %s", FAILMARK)
 
 	server := NewStaticContentHandler()
-	server.ServeStaticContent(LISTEN_PORT)
+	server.ListenAndServeStaticContent(LISTEN_PORT)
 
 	t.Logf("%s", PASSMARK)
 }

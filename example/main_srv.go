@@ -10,5 +10,5 @@ const (
 
 func main() {
 	server := msrvd.NewStaticContentHandler()
-	server.ServeStaticContent(LISTEN_PORT)
+	server.ListenAndServeStaticContent(LISTEN_PORT)
 }

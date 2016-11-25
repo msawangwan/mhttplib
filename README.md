@@ -22,4 +22,5 @@ from the example dir, try running (go run):
 
 wip
 
+- need to add options to pass in flags and opts on startup
 - need to find a better service than freegeoip

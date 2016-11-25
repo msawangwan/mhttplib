@@ -6,7 +6,12 @@
 
 * * *
 
-collection of http and web programs by me
+collection of http and web services by me
+
+- mproxd // a single host reverse proxy with logging
+- msrvd // a simple http web server
+- mtngin // a simple html template engine
+- mgeoloc // a small service that queries a db for geographic data based on ip
 
 ## usage
 

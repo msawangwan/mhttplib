@@ -5,3 +5,5 @@ access.log
 accesslog
 # ignore swap files
 *.swp
+# ignore test coverage reports
+*.out
